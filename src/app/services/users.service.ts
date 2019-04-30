@@ -9,7 +9,7 @@ import { map }                              from 'rxjs/operators';
 //----------------------------------------------------------------------------
 // Imports Section (App)
 //----------------------------------------------------------------------------
-import { Usuario }                          from 'src/app/models/classes/usuario';
+import { User }                             from 'src/app/models/classes/user';
 
 
 //----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ import { Usuario }                          from 'src/app/models/classes/usuario
 //----------------------------------------------------------------------------
 // Service Class Section
 //----------------------------------------------------------------------------
-export class UsuarioService
+export class UsersService
 {
     //------------------------------------------------------------------------
     // Private Properties Section
@@ -39,14 +39,21 @@ export class UsuarioService
     //------------------------------------------------------------------------
     // Public Methods Section
     //------------------------------------------------------------------------
-    public getUser(): Observable<Usuario[]>
+    public getUsers(): Observable<User[]>
     {
         const url: string = 'https://reqres.in/api/users';
         return this.httpService.get(`${url}?per_page=10`)
         .pipe(
-            map((response: {data: Usuario[]}) => response.data)
+            map((response: {data: User[]}) => response.data)
         );
-
     }
-
+    //------------------------------------------------------------------------
+    public getUserById(userId: string): Observable<User>
+    {
+        const url: string = `https://reqres.in/api/users/${userId}`;
+        return this.httpService.get(url)
+        .pipe(
+            map((response: {data: User}) => response.data)
+        );
+    }
 }

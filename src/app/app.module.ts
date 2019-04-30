@@ -11,8 +11,11 @@ import { HttpClientModule }                 from '@angular/common/http';
 // Imports Section (Redux)
 //------------------------------------------------------------------------------------------------------
 import { StoreModule }                      from '@ngrx/store';
+import { EffectsModule }                    from '@ngrx/effects';
 import { StoreDevtoolsModule }              from '@ngrx/store-devtools';
+import { appReducers }                      from './redux/reducers/app.reducer';
 import { environment }                      from '../environments/environment';
+import { effectsArray }                     from './redux/effects/index';
 
 //------------------------------------------------------------------------------------------------------
 // Imports Section (App Modules)
@@ -39,7 +42,8 @@ import { AppComponent }                     from './views/main/app.component';
         SharedModule,
         UsuarioModule,
         AppRoutingModule,
-        //StoreModule.forRoot(appReducers),
+        StoreModule.forRoot(appReducers),
+        EffectsModule.forRoot( effectsArray ),
         StoreDevtoolsModule.instrument({
             maxAge: 25,
             logOnly: environment.production

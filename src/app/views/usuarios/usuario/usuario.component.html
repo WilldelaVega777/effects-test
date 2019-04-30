@@ -1,1 +1,35 @@
-<div>usuario component works!</div>
+<div *ngIf="this.loading" class="row">
+    <div class="col">
+        <div class="alert alert-info text-center">
+            <i class="fa fa-sync fa-spin fa-2x"></i>
+            <h1>Cargando...</h1>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="this.error" class="row">
+    <div class="col">
+        <div class="alert alert-danger text-center">
+            <i class="fa fa-times fa-2x"></i>
+            <h2>Error: {{ error.status }}</h2>
+            <p>
+                {{ error.message }}
+                <br><br>
+                {{ error.url }}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="((!error) && (!loading))" class="row mt-3 ml-3 mr-3">
+    <div class="col-3">
+        <img [src]="user.avatar" class="img-thumbnail" alt="{{ user.first_name + ' ' + user.last_name }}">
+    </div>
+    <div class="col">
+        <ul class="list-group">
+            <li class="list-group-item">ID: {{ user.id }}</li>
+            <li class="list-group-item">First Name: {{ user.first_name }}</li>
+            <li class="list-group-item">Last Name:  {{ user.last_name }}</li>
+        </ul>
+    </div>
+</div>

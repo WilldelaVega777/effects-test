@@ -4,13 +4,23 @@
 import { Component }                    from '@angular/core';
 import { OnInit }                       from '@angular/core';
 import { OnDestroy }                    from '@angular/core';
+
+//----------------------------------------------------------------------------
+// Imports Section (Redux)
+//----------------------------------------------------------------------------
+import { Store }                        from '@ngrx/store';
+import { IAppState }                    from 'src/app/redux/interfaces/app.state';
+import { IUsersState }                  from './../../../redux/interfaces/users.state';
+import * as UsersActions                from 'src/app/redux/actions/users.actions';
+import { Subscription }                 from 'rxjs';
+import { filter }                       from 'rxjs/operators';
 import { map }                          from 'rxjs/operators';
 
 //----------------------------------------------------------------------------
 // Imports Section (App)
 //----------------------------------------------------------------------------
-import { UsuarioService }               from 'src/app/services/usuario.service';
-import { Usuario } from 'src/app/models/classes/usuario';
+import { UsersService }                 from 'src/app/services/users.service';
+import { User }                         from 'src/app/models/classes/user';
 
 //----------------------------------------------------------------------------
 // Component Configuration Section
@@ -28,20 +38,25 @@ export class ListaComponent implements OnInit, OnDestroy
     //------------------------------------------------------------------------
     // Public Fields Section
     //------------------------------------------------------------------------
-    public usuarios                         : Usuario[];
+    public usuarios                         : User[];
+    public loading                          : boolean;
+    public error                            : any;
 
 
     //------------------------------------------------------------------------
     // Private Fields Section
     //------------------------------------------------------------------------
-    private usuarioService                  : UsuarioService;
+    private usuarioService                  : UsersService;
+    private store                           : Store<IAppState>;
+    private users$                          : Subscription;
 
 
     //------------------------------------------------------------------------
     // Constructor Method Section
     //------------------------------------------------------------------------
-    constructor(us: UsuarioService)
+    constructor(st: Store<IAppState>, us: UsersService)
     {
+        this.store          = st;
         this.usuarioService = us;
     }
 
@@ -51,15 +66,25 @@ export class ListaComponent implements OnInit, OnDestroy
     //------------------------------------------------------------------------
     ngOnInit()
     {
-        this.usuarioService.getUser()
-        .subscribe((data: Usuario[]) => {
-            this.usuarios = data;
+        // Dispatch Actions
+        this.store.dispatch(new UsersActions.LoadUsers());
+
+        // Listen for Response(s)
+        this.users$ = this.store
+        .pipe(
+            filter((state: IAppState) => ((state.users != null) && (state.users.users != null))),
+            map((state: IAppState) => state.users)
+        )
+        .subscribe((response: IUsersState) => {
+            this.usuarios = response.users;
+            this.loading  = response.loading;
+            this.error    = response.error;
         });
     }
     //------------------------------------------------------------------------
     ngOnDestroy()
     {
-
+        this.users$.unsubscribe();
     }
 
     //------------------------------------------------------------------------
